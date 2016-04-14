@@ -22,6 +22,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Tango;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// GUI controller controls all the debug overlay to show the data for poses.
@@ -167,11 +169,11 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                                             UI_BUTTON_SIZE_X,
                                             UI_BUTTON_SIZE_Y);
         string isOn = m_arCameraPostProcess.enabled ? "Off" : "On";
-        if (GUI.Button(distortionButtonRec,
-                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
-        {
-            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
-        }
+//        if (GUI.Button(distortionButtonRec,
+//                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
+//        {
+//            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
+//        }
 
         if (m_showDebug && m_tangoApplication.HasRequestedPermissions())
         {
@@ -542,7 +544,24 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         }
         
         Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
-        
+
+//        var inputObj = GameObject.FindWithTag("input");
+//        if (inputObj == null)
+//        {
+//            Debug.Log("inputObj is null");
+//        }
+//        else
+//        {
+//            var input = inputObj.GetComponent<InputField>();
+//
+//            input.text = "test";
+//            
+////            EventSystem.current.SetSelectedGameObject(input.gameObject, null);
+////            input.OnPointerClick(new PointerEventData(EventSystem.current));
+//
+//            input.ActivateInputField();
+//        }
+
         m_selectedMarker = null;
     }
 }
