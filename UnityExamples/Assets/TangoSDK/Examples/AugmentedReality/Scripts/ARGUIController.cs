@@ -540,8 +540,9 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             // floating point error in it.
             forward = Vector3.Cross(up, cam.transform.right);
         }
-
+        
         Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
+        
         m_selectedMarker = null;
     }
 }
