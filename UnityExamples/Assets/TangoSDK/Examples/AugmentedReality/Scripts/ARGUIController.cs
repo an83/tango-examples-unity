@@ -102,6 +102,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private ARMarker m_selectedMarker;
 
+    private GameObject m_selectedNote;
+
+    private int m_noteIndex;
+
     /// <summary>
     /// If set, this is the rectangle bounding the selected marker.
     /// </summary>
@@ -169,11 +173,18 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
                                             UI_BUTTON_SIZE_X,
                                             UI_BUTTON_SIZE_Y);
         string isOn = m_arCameraPostProcess.enabled ? "Off" : "On";
-//        if (GUI.Button(distortionButtonRec,
-//                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
-//        {
-//            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
-//        }
+        //        if (GUI.Button(distortionButtonRec,
+        //                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
+        //        {
+        //            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
+        //        }
+
+
+        if (m_selectedNote != null)
+        {
+            var note = GetText(m_selectedNote);
+            GUI.Label(new Rect(10, 10, 300, 30), "selected: " + note);
+        }
 
         if (m_showDebug && m_tangoApplication.HasRequestedPermissions())
         {
@@ -456,15 +467,35 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             }
             else if (Physics.Raycast(cam.ScreenPointToRay(t.position), out hitInfo))
             {
+
+                if (m_selectedNote != null)
+                {
+                    SetText(m_selectedNote, "Hello world");
+                }
+
                 // Found a marker, select it (so long as it isn't disappearing)!
                 GameObject tapped = hitInfo.collider.gameObject;
-                if (!tapped.GetComponent<Animation>().isPlaying)
-                {
-                    m_selectedMarker = tapped.GetComponent<ARMarker>();
-                }
+//                if (!tapped.GetComponent<Animation>().isPlaying)
+//                {
+//                    m_selectedMarker = tapped.GetComponent<ARMarker>();
+//                }
+
+                m_selectedNote = tapped;
+
+                SetText(m_selectedNote, "selected");
+
+//                var material = m_selectedNote.GetComponent<Material>();
+//                material.color = Color.red;
             }
             else
             {
+                if (m_selectedNote != null)
+                {
+                    SetText(m_selectedNote, "Hello world");
+                }
+
+//                m_selectedNote = null;
+
                 // Place a new point at that location, clear selection
                 m_selectedMarker = null;
                 StartCoroutine(_WaitForDepthAndFindPlane(t.position));
@@ -499,6 +530,19 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         {
             return;
         }
+    }
+
+    private void SetText(GameObject note, string text)
+    {
+        var textObj = note.transform.FindChild("New Text");
+        var textMesh = textObj.GetComponent<TextMesh>();
+        textMesh.text = text;
+    }
+    private string GetText(GameObject note)
+    {
+        var textObj = note.transform.FindChild("New Text");
+        var textMesh = textObj.GetComponent<TextMesh>();
+        return textMesh.text;
     }
 
     /// <summary>
@@ -542,25 +586,36 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             // floating point error in it.
             forward = Vector3.Cross(up, cam.transform.right);
         }
-        
-        Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
 
-//        var inputObj = GameObject.FindWithTag("input");
-//        if (inputObj == null)
-//        {
-//            Debug.Log("inputObj is null");
-//        }
-//        else
-//        {
-//            var input = inputObj.GetComponent<InputField>();
-//
-//            input.text = "test";
-//            
-////            EventSystem.current.SetSelectedGameObject(input.gameObject, null);
-////            input.OnPointerClick(new PointerEventData(EventSystem.current));
-//
-//            input.ActivateInputField();
-//        }
+        if (m_selectedNote != null)
+        {
+            m_selectedNote.transform.position = planeCenter;
+            m_selectedNote.transform.rotation = Quaternion.LookRotation(forward, up);
+        }
+        else
+        {
+            var note = (GameObject)Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
+            SetText(note, "hello " + ++m_noteIndex);
+        }
+
+        //        var inputObj = GameObject.FindWithTag("input");
+        //        if (inputObj == null)
+        //        {
+        //            Debug.Log("inputObj is null");
+        //        }
+        //        else
+        //        {
+        //            var input = inputObj.GetComponent<InputField>();
+        //
+        //            input.text = "test";
+        //            
+        ////            EventSystem.current.SetSelectedGameObject(input.gameObject, null);
+        ////            input.OnPointerClick(new PointerEventData(EventSystem.current));
+        //
+        //            input.ActivateInputField();
+        //        }
+
+        m_selectedNote = null;
 
         m_selectedMarker = null;
     }
