@@ -15,6 +15,7 @@ public class SpeechRecognizerDemo : MonoBehaviour {
 	private TextToSpeechPlugin textToSpeechPlugin;
     
     public string RecognisedText { get; private set; }
+    public bool IsEndOfSpeech { get; private set; }
 
     // Use this for initialization
     void Start (){		
@@ -44,12 +45,16 @@ public class SpeechRecognizerDemo : MonoBehaviour {
 	public void StartListening(){
 		bool isSupported = speechPlugin.CheckSpeechRecognizerSupport();
 
-		if(isSupported){
-			//number of possible results
-			//Note: sometimes even you put 5 numberOfResults, there's a chance that it will be only 3 or 2
-			//it is not constant.
-			
-			int numberOfResults = 5;
+		if(isSupported)
+		{
+
+		    IsEndOfSpeech = false;
+
+            //number of possible results
+            //Note: sometimes even you put 5 numberOfResults, there's a chance that it will be only 3 or 2
+            //it is not constant.
+
+            int numberOfResults = 5;
 			speechPlugin.StartListening(numberOfResults);
 			
 			//by activating this, the Speech Recognizer will start and you can start Speaking or saying something 
@@ -126,7 +131,11 @@ public class SpeechRecognizerDemo : MonoBehaviour {
 		}
 	}
 
-	private void onEndOfSpeech(string data){
+	private void onEndOfSpeech(string data)
+	{
+
+	    IsEndOfSpeech = true;
+
 		if(statusText!=null){
 			statusText.text =  String.Format("Status: {0}",data.ToString()); 
 		}
