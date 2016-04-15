@@ -69,11 +69,14 @@ public class SpeechRecognizerDemo : MonoBehaviour {
 		bool isSupported = speechPlugin.CheckSpeechRecognizerSupport();
 		
 		if(isSupported){
-			//number of possible results
-			//Note: sometimes even you put 5 numberOfResults, there's a chance that it will be only 3 or 2
-			//it is not constant.
-			
-			int numberOfResults = 5;
+            
+            IsEndOfSpeech = false;
+
+            //number of possible results
+            //Note: sometimes even you put 5 numberOfResults, there's a chance that it will be only 3 or 2
+            //it is not constant.
+
+            int numberOfResults = 5;
 			speechPlugin.StartListeningNoBeep(numberOfResults,true);
 			
 			//by activating this, the Speech Recognizer will start and you can start Speaking or saying something 
@@ -155,26 +158,31 @@ public class SpeechRecognizerDemo : MonoBehaviour {
 	}
 
 	private void onResults(string data){
-		if(resultText!=null){
-			string[] results =  data.Split(',');
-			Debug.Log(" result length " + results.Length);
-			
-			//when you set morethan 1 results index zero is always the closest to the words the you said
-			//but it's not always the case so if you are not happy with index zero result you can always 
-			//check the other index
-			
-			//sample on checking other results
-			foreach( string possibleResults in results ){
-				Debug.Log( " possibleResults " + possibleResults );
-			}
-			
-			//sample showing the nearest result
-			string whatToSay  = results.GetValue(0).ToString();
-			string utteranceId  = "test-utteranceId";
-			resultText.text =  string.Format("Result: {0}",whatToSay);
 
-		    RecognisedText = whatToSay;
+        string[] results = data.Split(',');
+        Debug.Log(" result length " + results.Length);
 
+        //when you set morethan 1 results index zero is always the closest to the words the you said
+        //but it's not always the case so if you are not happy with index zero result you can always 
+        //check the other index
+
+        //sample on checking other results
+        foreach (string possibleResults in results)
+        {
+            Debug.Log(" possibleResults " + possibleResults);
+        }
+
+        //sample showing the nearest result
+        string whatToSay = results.GetValue(0).ToString();
+        string utteranceId = "test-utteranceId";
+
+        RecognisedText = whatToSay;
+        
+        if (resultText!=null){
+			
+            resultText.text =  string.Format("Result: {0}",whatToSay);
+
+		    
 			//check if Text to speech has initialized
 			if(hasInit){
 				//Text To Speech Sample Usage

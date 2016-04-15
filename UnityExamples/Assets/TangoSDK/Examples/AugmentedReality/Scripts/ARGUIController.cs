@@ -595,7 +595,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         else
         {
             var note = (GameObject)Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
-            SetText(note, "hello " + ++m_noteIndex);
+
+            note.transform.Rotate(Vector3.up, 180);
+
+            SetText(note, "note " + ++m_noteIndex);
 
 //            var buttonObject = GameObject.Find("Canvas/Button");
 //            buttonObject.GetComponent<Button>().onClick.Invoke();
